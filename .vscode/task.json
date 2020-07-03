@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "prebuild",
+            "command": "tslint -c tslint.json -p tsconfig.json --fix"
+        },
+        {
+            "label": "compile",
+            "command": "tsc"
+        },
+        {
+            "label": "build",
+            "command": "npm run build"
+        },
+        {
+            "label": "start",
+            "command": "node."
+        }
+    ],
+    "command": "npm run start",
+    "args": [
+        "-w",
+        "-p",
+        "."
+    ],
+    "isBackground": true,
+    "problemMatcher": "$tsc-watch"
+}

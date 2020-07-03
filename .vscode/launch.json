@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            // "preLaunchTask": "",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/dist/server.js",
+            // "preLaunchTask": "tsc: build - tsconfig.json",
+            // "outFiles": [
+            //     "${workspaceFolder}"
+            // ],
+            "env": {
+                "NODE_ENV": "development",
+                "MONGO_URL": "mongodb://localhost:27017/",
+                "MONGO_DB": "test",
+                "FRONT_END_URL": "http://localhost:4200"
+            }
+        }
+    ]
+}

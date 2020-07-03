@@ -1,0 +1,56 @@
+{
+	"name": "type-script-repo",
+	"version": "1.0.0",
+	"description": "set up typescript repo with documentation and testing",
+	"main": "dist/server.js",
+	"scripts": {
+		"prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+		"build": "tsc",
+		"prestart": "npm run build",
+		"start": "node --inspect=3000 -r ts-node/register .",
+		"start:watch": "nodemon",
+		"test": "mocha --reporter spec --require ts-node/register --extensions ts,tsx --watch --watch-files src 'test/**/*.test.ts'"
+	},
+	"repository": {
+		"type": "git",
+		"url": "type-script-repo"
+	},
+	"keywords": [
+		"typescript",
+		"node",
+		"express",
+		"rest",
+		"api",
+		"swagger",
+		"mocha",
+		"chai"
+	],
+	"author": "ruhi",
+	"license": "ISC",
+	"dependencies": {
+		"@types/mongoose": "^5.7.29",
+		"@types/swagger-ui-express": "^4.1.2",
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"mongoose": "^5.9.21",
+		"morgan": "^1.10.0",
+		"swagger-ui-express": "^4.1.4",
+		"tslint": "^6.1.2",
+		"typescript": "^3.9.6"
+	},
+	"devDependencies": {
+		"@types/body-parser": "^1.19.0",
+		"@types/chai": "^4.2.11",
+		"@types/chai-http": "^4.2.0",
+		"@types/cors": "^2.8.6",
+		"@types/express": "^4.17.6",
+		"@types/mocha": "^7.0.2",
+		"@types/morgan": "^1.9.1",
+		"@types/node": "^14.0.14",
+		"chai": "^4.2.0",
+		"chai-http": "^4.3.0",
+		"mocha": "^8.0.1",
+		"nodemon": "^2.0.4",
+		"ts-node": "^8.10.2"
+	}
+}
