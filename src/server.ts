@@ -1,11 +1,23 @@
 import App from "./app";
 import * as http from "http";
-const port = process.env.PORT || 3002;
+import { convertToNumber } from "./util/index";
+import mongoose from "mongoose";
+
+const port = convertToNumber(process.env.PORT || 3002);
+const connectionString: string = process.env.MONGO_URL + process.env.MONGO_DB;
 
 export const server = http.createServer(App);
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
+
+mongoose.connect(connectionString)
+    .then(res => console.log("Database connected ... "))
+    .catch((error) => {
+        console.log("connectionString", connectionString);
+        console.error(error);
+        return process.exit();
+    });
 
 function onError(error: NodeJS.ErrnoException): void {
     if (error.syscall !== 'listen') throw error;
