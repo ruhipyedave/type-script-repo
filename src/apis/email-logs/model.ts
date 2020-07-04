@@ -1,6 +1,6 @@
 import { Schema, Document, model } from "mongoose";
 import { ObjectId } from "bson";
-import { EmailOptions } from "../../util/email";
+import { EmailOptions } from "../../utils/email";
 
 const accountsSchema = new Schema(
     {

@@ -1,8 +1,8 @@
 import { Schema, Document, model } from "mongoose";
 import { ObjectId } from "bson";
-import { APIError } from "../../util/error";
-import { ACCOUNTS_ERRORS } from "../../util/error";
-import { checkIfEmpty } from "../../util";
+import { APIError } from "../../utils/error";
+import { ACCOUNTS_ERRORS } from "../../utils/error";
+import { checkIfEmpty } from "../../utils";
 
 export const ACCOUNT = {
     type: {
@@ -49,6 +49,10 @@ const accountsSchema = new Schema(
             type: ObjectId,
             ref: "users",
             default: null
+        },
+        transactionInProgress: {
+            type: Boolean,
+            default: false
         }
     },
     { timestamps: true }
@@ -61,6 +65,9 @@ export interface Account extends Document {
     status: number;
     createdBy?: ObjectId;
     updatedBy?: ObjectId;
+    createdAt?: Date;
+    updatedAt?: Date;
+    transactionInProgress: boolean;
 }
 
 export let AccountsModel = model<Account>("accounts", accountsSchema);
@@ -72,6 +79,9 @@ export class AccountClass {
     status: number;
     createdBy?: ObjectId;
     updatedBy?: ObjectId;
+    createdAt?: Date;
+    updatedAt?: Date;
+    transactionInProgress: boolean;
     constructor(userId: ObjectId | string, balance: number, type: number,
         status?: number, createdById?: ObjectId | string) {
         this.user = new ObjectId(userId);

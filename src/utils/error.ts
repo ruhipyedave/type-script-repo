@@ -42,8 +42,9 @@ export const USERS_ERRORS = {
     invalidRole: { key: "30003", msg: "Invalid user role." },
     notVerified: { key: "30004", msg: "Please verify your account." },
     userExists: { key: "30005", msg: "Email is already registered." },
-    deleted: { key: "30005", msg: "Account is deleted. Please contact bank." },
-    invalid: { key: "30005", msg: "Invalid Email." },
+    deleted: { key: "30006", msg: "Account is deleted. Please contact bank." },
+    invalid: { key: "30007", msg: "Invalid Email." },
+    notFound: { key: "30008", msg: "User not found." },
 }
 
 export const ACCOUNTS_ERRORS = {
@@ -55,6 +56,11 @@ export const ACCOUNTS_ERRORS = {
 export const TRANSACTIONS_ERRORS = {
     missingId: { key: "50001", msg: "Missing id." },
     invalidId: { key: "50002", msg: "Specified transaction not found." },
+    invalidType: { key: "50003", msg: "Invalid transaction type." },
+    invalidAmount: { key: "50004", msg: "Invalid amount." },
+    invalidAccId: { key: "50005", msg: "Invalid account id." },
+    insufficientBalance: { key: "50006", msg: "Insufficient balnace." },
+    inProgress: { key: "50007", msg: "Transaction is in progress, please try again after some time." },
 }
 
 
@@ -63,15 +69,16 @@ export function getErrorMessage(code: number): string {
 }
 
 // process error
-export function processError(res: Response, error: Error | APIError) {
+export function processError(res: Response, error: Error | APIError, code: number = INTERNAL_SERVER_ERROR) {
+
     // error due to bad request
     if (error instanceof APIError) {
-        return res.status(BAD_REQUEST).send(error);
+        return res.status(code ? code : BAD_REQUEST).send(error);
     }
     // server error
     if (error instanceof Error) {
-        return res.status(INTERNAL_SERVER_ERROR).send(new APIError(error.name, error.message, INTERNAL_SERVER_ERROR));
+        return res.status(code).send(new APIError(error.name, error.message, code));
     }
-    res.status(INTERNAL_SERVER_ERROR).send(new APIError(CONNECTION_ERRORS.request.key,
-        CONNECTION_ERRORS.request.msg, INTERNAL_SERVER_ERROR));
+    res.status(code).send(new APIError(CONNECTION_ERRORS.request.key,
+        CONNECTION_ERRORS.request.msg, code));
 }

@@ -66,7 +66,7 @@ describe('Auth API', () => {
                     res.body.should.have.property("success");
                     res.body.success.should.equal(false);
                     res.body.should.have.property("code");
-                    res.body.code.should.equal(400);
+                    res.body.code.should.equal(500);
                     res.body.should.have.property("key");
                     res.body.key.should.equal("30004");
                     res.body.should.have.property("error");
@@ -79,7 +79,7 @@ describe('Auth API', () => {
     })
 
     describe(`Sign-up customer API`, () => {
-        it('should throe error 2', () => {
+        it('should throw error 2', () => {
             const payload = {
                 "email": "ruhipyedave123+1@gmail.com",
                 "password": "ruhi@123",
@@ -94,13 +94,31 @@ describe('Auth API', () => {
                     res.body.should.have.property("success");
                     res.body.success.should.equal(false);
                     res.body.should.have.property("code");
-                    res.body.code.should.equal(400);
+                    res.body.code.should.equal(500);
                     res.body.should.have.property("key");
                     res.body.key.should.equal("30004");
                     res.body.should.have.property("error");
                     res.body.error.should.be.an("array");
                 }).catch((error) => {
                     console.log("2------> :", error);
+                });
+        });
+    })
+
+    describe(`Verify user API`, () => {
+        it('should have a message property', () => {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNWYwMDkyOGVmYmIwZjU3MjAyZjA3OTIyIiwiZXhwIjoxNTkzODc2NjM5LCJpYXQiOjE1OTM4NzMwMzl9.le61hFDN7qypBX5hp8-nHpcyw4ft_wpw7XTeGmNlo5A";
+            chai.request(server)
+                .get(`${DEFAULT_ROUTER}/auth/verify?token=${token}`)
+                .then((res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.an("object");
+                    res.body.should.have.property("data");
+                    res.body.data.should.be.an("object");
+                    res.body.data.should.have.property("message");
+                    res.body.data.message.should.be.a("string");
+                }).catch((error) => {
+                    console.log(error);
                 });
         });
     })

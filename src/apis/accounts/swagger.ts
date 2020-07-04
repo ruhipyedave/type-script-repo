@@ -1,57 +1,92 @@
-export const createAccount = {
-    tags: ['Account'],
-    description: "Create Accounnt API",
-    operationId: 'Create Accounnt',
-    requestBody: {
-        description: "Create Accounnt payload",
-        required: true,
-        content: {
-            "application/ json:": {
-                schema:
-                {
-                    type: "object",
-                    properties: {
-                        email: {
-                            type: 'string',
-                            description: 'Users email',
-                            required: true
-                        },
-                        password: {
-                            type: 'string',
-                            description: 'Users password',
-                            required: true
-                        }
-                    }
-                }
-            }
-        }
-    },
-    responses: {
-        "200": {
-            description: "Object with auth token",
-            content: {
-                "application/json": {
-                    schema:
+export const ACCOUNTS_TAG = {
+    name: "Account",
+    paths: {
+        "/accounts": {
+            post: {
+                tags: ['Account'],
+                description: "Create Account API",
+                operationId: 'Create Account',
+                security: [
                     {
-                        type: "object",
-                        properties: {
-                            success: {
-                                type: "boolen",
-                                example: true
-                            },
-                            data: {
+                        bearerAuth: ["token"]
+                    }
+                ],
+                requestBody: {
+                    description: "Account payload",
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema:
+                            {
                                 type: "object",
                                 properties: {
-                                    token: {
-                                        type: "string",
-                                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNWYwMDMyYTMyMTYxMTYyOWU0YWI5Nzk4IiwiZXhwIjoxNTkzOTM3ODk5LCJpYXQiOjE1OTM4NTE0OTl9.LUg-oZXQokABKIwyW5Q5DmCc3C2SPAwz8RipGM8CZYM"
+                                    userId: {
+                                        type: 'string',
+                                        description: 'Users id.',
+                                        required: false,
+                                        example: "5f008cef72cda66569e45e46"
+                                    },
+                                    balance: {
+                                        type: 'number',
+                                        description: 'Amount in rupees',
+                                        required: false,
+                                        example: 1000
+                                    },
+                                    type: {
+                                        type: 'number',
+                                        description: 'Account type',
+                                        required: true,
+                                        example: 1
                                     }
                                 }
-
-                            },
-                            count: {
-                                type: "number",
-                                example: 1
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    "200": {
+                        description: "Retuen created account details.",
+                        content: {
+                            "application/json": {
+                                schema:
+                                {
+                                    type: "object",
+                                    properties: {
+                                        success: {
+                                            type: "boolen",
+                                            example: true
+                                        },
+                                        data: {
+                                            type: "object",
+                                            properties: {
+                                                userId: {
+                                                    type: "string",
+                                                    example: "5f008cef72cda66569e45e46"
+                                                },
+                                                balance: {
+                                                    type: "number",
+                                                    example: 1000
+                                                },
+                                                type: {
+                                                    type: "number",
+                                                    example: 1
+                                                },
+                                                status: {
+                                                    type: "number",
+                                                    example: 1
+                                                },
+                                                createdBy: {
+                                                    type: "string",
+                                                    example: "5f008cef72cda66569e45e46"
+                                                }
+                                            }
+                                        },
+                                        count: {
+                                            type: "number",
+                                            example: 1
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -60,3 +95,8 @@ export const createAccount = {
         }
     }
 }
+
+
+
+
+

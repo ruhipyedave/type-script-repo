@@ -1,11 +1,12 @@
 import { UsersModel, User, UserClass, USER } from "./model";
-import { sendEmail, EmailOptions } from "../../util/email";
-import { checkIfEmpty } from "../../util";
-import { USERS_ERRORS, APIError, ACCOUNTS_ERRORS } from "../../util/error";
-import { generateToken } from "../../util/auth";
+import { sendEmail, EmailOptions } from "../../utils/email";
+import { checkIfEmpty } from "../../utils";
+import { USERS_ERRORS, APIError, ACCOUNTS_ERRORS } from "../../utils/error";
+import { generateToken } from "../../utils/auth";
 import { ACCESS_TOKEN_LIFETIME } from "../auth/module";
-import { accountVerifyTemplate } from "../../util/email-templates";
+import { accountVerifyTemplate } from "../../utils/email-templates";
 import { createAccount } from "../accounts/module";
+import { UNAUTHORIZED } from "http-status-codes";
 
 function listUsers(
     query: object,
@@ -70,4 +71,33 @@ export async function createCustomer(email: string, pwd: string, name: string, a
             throw new APIError(USERS_ERRORS.deleted.key, USERS_ERRORS.deleted.msg);
     }
     throw new APIError(USERS_ERRORS.invalid.key, USERS_ERRORS.invalid.msg);
+}
+
+
+export interface ValidUser {
+    _id: string;
+    role: number;
+}
+
+// validate user for authorization
+export async function validateUser(userId: string) {
+    const user = await UsersModel.findById(userId);
+
+    if (!user) {
+        throw new APIError(USERS_ERRORS.notFound.key, USERS_ERRORS.notFound.msg);
+    }
+
+    switch (user.status) {
+        case USER.status.active:
+            return { role: user.role, _id: user._id }
+
+        case USER.status.pending:
+            throw new APIError(USERS_ERRORS.notVerified.key, USERS_ERRORS.notVerified.msg);
+
+        case USER.status.deleted:
+            throw new APIError(USERS_ERRORS.deleted.key, USERS_ERRORS.deleted.msg);
+
+        default:
+            throw new APIError(USERS_ERRORS.invalid.key, USERS_ERRORS.invalid.msg);
+    }
 }

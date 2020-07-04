@@ -34,8 +34,6 @@ export async function sendEmail(mailOptions: EmailOptions): Promise<any> {
         const transporter = await generateAccount();
         mailOptions.from = testAccount.user;
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: %s", info.messageId);
-        console.log("Email sent:", info);
         logEmailSent(mailOptions, info);
     } catch (error) {
         console.log(error);

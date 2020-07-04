@@ -1,8 +1,8 @@
-import { checkIfEmpty } from "../../util";
-import { APIError, AUTH_ERRORS } from "../../util/error";
+import { checkIfEmpty } from "../../utils";
+import { APIError, AUTH_ERRORS } from "../../utils/error";
 import { findUser, createCustomer } from "../users/module";
-import { USER } from "../users/model";
-import { generateToken, comparePasswords } from "../../util/auth";
+import { USER, UsersModel } from "../users/model";
+import { generateToken, comparePasswords, verifyToken } from "../../utils/auth";
 export const ACCESS_TOKEN_LIFETIME = {
     login: 60 * 60 * 24, // 24 hrs,
     verify: 60 * 60 // 1 hr
@@ -51,4 +51,18 @@ export async function customerSignUp(email: string, pwd: string, name: string,
     pwd = pwd.toString().trim();
     await createCustomer(email, pwd, name, account);
     return "Please check your email inbox to verify your account."
+}
+
+// activate users account so that user can login and user the application
+export async function verifyUser(token: string) {
+    const userId = await verifyToken(token);
+    const user = await findUser({ _id: userId, status: USER.status.pending }, {}, { lean: false });
+    if (!user) {
+        throw new APIError(AUTH_ERRORS.expieredToken.key, AUTH_ERRORS.expieredToken.msg);
+    }
+    // Token is valid, so activate the user
+    user.status = USER.status.active
+    user.token = null;
+    user.save();
+    return "Verfication is complete, Please login to start using the application.";
 }
