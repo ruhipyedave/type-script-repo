@@ -1,4 +1,4 @@
-// import { getDeployments } from "../src/deployments/swagger";
+import { AUTH_TAG } from "../apis/auth/swagger";
 export const swaggerDocument = {
     openapi: '3.0.1',
     info: {
@@ -13,7 +13,7 @@ export const swaggerDocument = {
     },
     servers: [
         {
-            url: 'http://localhost:3001/api/v1',
+            url: `http://localhost:3002/api/v1`,
             description: 'Local Env'
         }
     ],
@@ -29,14 +29,12 @@ export const swaggerDocument = {
             }
         }
     },
-    // tags: [
-    //     {
-    //         name: 'Deployments'
-    //     }
-    // ],
-    // paths: {
-    //     "/deployments": {
-    //         "get": getDeployments
-    //     }
-    // }
+    tags: [
+        {
+            name: AUTH_TAG.name
+        }
+    ],
+    paths: {
+        ...AUTH_TAG.paths
+    }
 }

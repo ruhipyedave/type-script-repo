@@ -10,7 +10,7 @@ describe('baseRoute', () => {
         it('should have a message prop', () => {
             chai.request(server).get('/')
                 .then(res => {
-                    expect(res.body.message).to.eql('Hello World!');
+                    expect(res.body.message).to.eql("Hello World!");
                 }).catch((error) => {
                     console.log("....", error);
                 });
