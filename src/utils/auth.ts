@@ -1,5 +1,5 @@
 import * as bcrypt from "bcryptjs";
-import { checkIfEmpty, getCurrentUnixTimeStamp } from "./";
+import { checkIfEmpty, getCurrentUnixTimeStamp } from ".";
 import { APIError, AUTH_ERRORS } from "./error";
 import jwt from 'jsonwebtoken';
 const SECRET: string = "fCa_BRPu9r9UK-UP^w6rTUjL4IkoW0iT";

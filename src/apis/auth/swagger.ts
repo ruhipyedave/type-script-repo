@@ -155,7 +155,7 @@ const signUp = {
                                     properties: {
                                         message: {
                                             type: "string",
-                                            message: "Please check your email inbox to verify your account."
+                                            example: "Please check your email inbox to verify your account."
                                         }
                                     }
 
@@ -190,11 +190,95 @@ const signUp = {
                                     properties: {
                                         key: {
                                             type: "string",
-                                            message: "30004"
+                                            example: "30004"
                                         },
                                         message: {
                                             type: "string",
-                                            message: "Please verify your account."
+                                            example: "Please verify your account."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+const verify = {
+    get: {
+        tags: ['Auth'],
+        description: "Verify user API",
+        operationId: 'Verify user',
+        parameters: [
+            {
+                name: "token",
+                in: "query",
+                required: true,
+                description: "verify user token",
+                type: "string",
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNWYwMDkyOGVmYmIwZjU3MjAyZjA3OTIyIiwiZXhwIjoxNTkzODc2NjM5LCJpYXQiOjE1OTM4NzMwMzl9.le61hFDN7qypBX5hp8-nHpcyw4ft_wpw7XTeGmNlo5A"
+            },
+        ],
+        responses: {
+            "200": {
+                description: "Object with auth token",
+                content: {
+                    "application/json": {
+                        schema:
+                        {
+                            type: "object",
+                            properties: {
+                                success: {
+                                    type: "boolen",
+                                    example: true
+                                },
+                                data: {
+                                    type: "object",
+                                    properties: {
+                                        message: {
+                                            type: "string",
+                                            example: "Verfication is complete, Please login to start using the application."
+                                        }
+                                    }
+                                },
+                                count: {
+                                    type: "number",
+                                    example: 1
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                description: "Error object",
+                content: {
+                    "application/json": {
+                        schema:
+                        {
+                            type: "object",
+                            properties: {
+                                success: {
+                                    type: "boolen",
+                                    example: false
+                                },
+                                code: {
+                                    type: "number",
+                                    example: 400
+                                },
+                                error: {
+                                    type: "object",
+                                    properties: {
+                                        key: {
+                                            type: "string",
+                                            example: "10005",
+                                        },
+                                        message: {
+                                            type: "string",
+                                            example: "Expired token."
                                         }
                                     }
                                 }
@@ -212,6 +296,7 @@ export const AUTH_TAG = {
     name: "Auth",
     paths: {
         "/auth/login": logIn,
-        "/auth/signup": signUp
+        "/auth/signup": signUp,
+        "/auth/verify": verify
     }
 }

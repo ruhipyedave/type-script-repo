@@ -2,7 +2,7 @@ import { Schema, model, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import _ from "underscore";
 import { ObjectId } from "bson";
-import { USERS_ERRORS, APIError } from "../../util/error";
+import { USERS_ERRORS, APIError } from "../../utils/error";
 const SALT_WORK_FACTOR = 10;
 
 export const USER = {

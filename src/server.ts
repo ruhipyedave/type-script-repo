@@ -1,6 +1,6 @@
 import App from "./app";
 import * as http from "http";
-import { convertToNumber } from "./util/index";
+import { convertToNumber } from "./utils/index";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
