@@ -126,5 +126,5 @@ export async function listUsers(user: ValidUser, q: ReqParams) {
             data: users, count
         }
     }
-    throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.key, UNAUTHORIZED);
+    throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.msg, UNAUTHORIZED);
 }

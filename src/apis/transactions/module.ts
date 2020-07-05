@@ -86,7 +86,7 @@ async function validateAccount(accountId: string, amount: number, user: ValidUse
 
     // check if account is active
     if (account.status !== ACCOUNT.status.active) {
-        throw new APIError(TRANSACTIONS_ERRORS.invalidAccId.key, TRANSACTIONS_ERRORS.invalidAccId.msg);
+        throw new APIError(TRANSACTIONS_ERRORS.notActive.key, TRANSACTIONS_ERRORS.notActive.msg);
     }
     return account;
 }
@@ -96,8 +96,11 @@ export async function listTransactions(user: ValidUser, q: ReqParams) {
     if (q.filter) {
         query = {
             ...query,
-            ...q.filter,
         }
+    };
+
+    if (q.filter) {
+        query.type = Number(q.filter.type)
     }
     switch (user.role) {
         // customer can view only his account trsancations
@@ -110,17 +113,23 @@ export async function listTransactions(user: ValidUser, q: ReqParams) {
             break;
 
         default:
-            throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.key, UNAUTHORIZED);
+            throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.msg, UNAUTHORIZED);
     }
 
     // get list of transactions
     const [data, count] = await Promise.all([
-        TransactionsModel.find(query, {}, { lean: true, ...q.options }).populate(
-            { path: "account" },
-            { path: "user", select: 'name email phone role status' }
-        ),
+        TransactionsModel.find(query, {}, { ...q.options }).populate(
+            { path: "account", populate: { path: "user", select: 'name email phone role status' } }),
         TransactionsModel.countDocuments(query),
     ]);
+
+    // TransactionsModel.
+    //     find({ name: 'Val' }).
+    //     populate({
+    //         path: 'friends',
+    //         // Get friends of friends - populate the 'friends' array for every friend
+    //         populate: { path: 'friends' }
+    //     });
 
     return {
         data, count
@@ -140,13 +149,11 @@ export async function getTransactionById(user: ValidUser, id: string) {
             break;
 
         default:
-            throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.key, UNAUTHORIZED);
+            throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.msg, UNAUTHORIZED);
     };
 
     const result = TransactionsModel.findOne(query, {}, { lean: true }).populate(
-        { path: "account" },
-        { path: "user", select: 'name email phone role status' }
-    );
+        { path: "account", populate: { path: "user", select: 'name email phone role status' } });
 
     return result;
 }
@@ -164,12 +171,12 @@ export async function performTransaction(user: ValidUser, mode: number, accountI
         case TRANSACTION.type.debit:
             await debit(user, accountId, amount);
             if (user.role !== USER.roles.customer) {
-                throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.key, UNAUTHORIZED);
+                throw new APIError(AUTH_ERRORS.unauthorised.key, AUTH_ERRORS.unauthorised.msg, UNAUTHORIZED);
             }
             break;
 
         default:
-            throw new APIError(TRANSACTIONS_ERRORS.invalidAccId.key, TRANSACTIONS_ERRORS.invalidAccId.msg);
+            throw new APIError(TRANSACTIONS_ERRORS.invalidMode.key, TRANSACTIONS_ERRORS.invalidMode.msg);
     }
     return "Transaction processed successfully."
 }

@@ -5,11 +5,11 @@ const transactionSchema = {
     properties: {
         account: {
             type: "string",
-            example: "5f0163bd3d51b727e790c0ba",
+            example: "5f0237734093c7299b88c3f6",
         },
         amount: {
             type: "number",
-            example: 0,
+            example: 1000,
         },
         type: {
             type: "number",
@@ -68,7 +68,7 @@ export const TRANSACTIONS_TAG = {
                                         type: 'string',
                                         description: 'Users id.',
                                         required: true,
-                                        example: "5f0163bd3d51b727e790c0ba"
+                                        example: "5f01ee9f57f619750d4a8530"
                                     },
                                     amount: {
                                         type: 'number',
@@ -78,7 +78,7 @@ export const TRANSACTIONS_TAG = {
                                     },
                                     mode: {
                                         type: 'number',
-                                        description: 'Transaction type',
+                                        description: 'Transaction type 1 - credit money in account, 2- debut money from account',
                                         required: true,
                                         example: TRANSACTION.type.credit
                                     }
@@ -103,7 +103,10 @@ export const TRANSACTIONS_TAG = {
                                         data: {
                                             type: "object",
                                             properties: {
-                                                message: "Transaction processed successfully."
+                                                message: {
+                                                    type: "string",
+                                                    example: "Transaction processed successfully."
+                                                }
                                             }
                                         }
                                     }
@@ -137,7 +140,7 @@ export const TRANSACTIONS_TAG = {
                         required: true,
                         description: "Number of entries to skip",
                         type: "number",
-                        example: 1
+                        example: 0
                     },
                     {
                         name: "filter",
@@ -194,7 +197,7 @@ export const TRANSACTIONS_TAG = {
                         required: true,
                         description: "Transaction id",
                         type: "number",
-                        example: "5f01ee9f57f619750d4a8530"
+                        example: "5f0237734093c7299b88c3f6"
                     }
                 ],
                 responses: {

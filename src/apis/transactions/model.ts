@@ -20,7 +20,7 @@ const transcrtionsSchema = new Schema(
     {
         account: {  // Account to which the amount should be credited or debited
             type: ObjectId,
-            ref: "users",
+            ref: "accounts",
             default: null,
             required: true,
         },

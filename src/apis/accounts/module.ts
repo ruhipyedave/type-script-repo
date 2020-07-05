@@ -60,7 +60,7 @@ export async function getAccountDetailsById(user: ValidUser, accId: string) {
     }
     // customer can view only his account
     if (user.role === USER.roles.customer) {
-        query.user = user.role;
+        query.user = user._id;
     }
     return await AccountsModel.findOne(query, {}, { lean: true });
 }

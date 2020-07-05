@@ -149,19 +149,24 @@ export class UserClass {
     }
 }
 
-const BANK_STAFF_USERS = [
-    new UserClass("One Staff", "one@staff.com"),
-    new UserClass("Two Staff", "two@staff.com")
+const DEFAULT_USERS = [
+    new UserClass("one@staff.com", "one@staff", USER.roles.staff, "One Staff", 1234567890),
+    new UserClass("two@staff.com", "two@staff", USER.roles.staff, "Two Staff", 1234567890),
+    new UserClass("one@customer.com", "one@customer", USER.roles.customer, "One Customer", 1234567890),
+    new UserClass("two@customer.com", "two@customer", USER.roles.customer, "Two Customer", 1234567890),
 ];
 
 export let UsersModel = model<User>("users", usersSchema);
 
-// Self executing anonymous function to add bank staff if not exists
+// Self executing anonymous function to add default users if not exists
 ((users) => {
     // Whatever is here will be executed as soon as the script is loaded.
     UsersModel.countDocuments({}).then((count) => {
         if (!count) {
-            UsersModel.create(users);
+            UsersModel.create(users).then(() => {
+                UsersModel.updateMany({}, { status: USER.status.active }).exec();
+            });
         }
     })
-})(BANK_STAFF_USERS);
+})(DEFAULT_USERS);
+

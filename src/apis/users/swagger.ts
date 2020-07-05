@@ -97,7 +97,7 @@ export const USERS_TAG = {
                         required: true,
                         description: "Number of entries to skip",
                         type: "number",
-                        example: 1
+                        example: 0
                     },
                     {
                         name: "filter",
