@@ -64,6 +64,8 @@ export const TRANSACTIONS_ERRORS = {
     invalidAccId: { key: "50005", msg: "Invalid account id." },
     insufficientBalance: { key: "50006", msg: "Insufficient balnace." },
     inProgress: { key: "50007", msg: "Transaction is in progress, please try again after some time." },
+    invalidMode: { key: "50008", msg: "Invalid mode of transaction." },
+    notActive: { key: "50008", msg: "Account is not active." },
 }
 
 

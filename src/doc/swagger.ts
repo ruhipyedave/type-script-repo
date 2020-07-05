@@ -1,6 +1,7 @@
 import { AUTH_TAG } from "../apis/auth/swagger";
 import { ACCOUNTS_TAG } from "../apis/accounts/swagger";
 import { USERS_TAG } from "../apis/users/swagger";
+import { TRANSACTIONS_TAG } from "../apis/transactions/swagger";
 export const swaggerDocument = {
     openapi: '3.0.1',
     info: {
@@ -34,11 +35,13 @@ export const swaggerDocument = {
     tags: [
         { name: AUTH_TAG.name },
         { name: ACCOUNTS_TAG.name },
-        { name: USERS_TAG.name }
+        { name: USERS_TAG.name },
+        { name: TRANSACTIONS_TAG.name }
     ],
     paths: {
         ...AUTH_TAG.paths,
         ...ACCOUNTS_TAG.paths,
-        ...USERS_TAG.paths
+        ...USERS_TAG.paths,
+        ...TRANSACTIONS_TAG.paths
     }
 }

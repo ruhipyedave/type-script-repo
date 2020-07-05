@@ -1,23 +1,23 @@
 
-import { ACCOUNT } from "../accounts/model";
-const accountSchema = {
+import { TRANSACTION } from "../transactions/model";
+const transactionSchema = {
     type: "object",
     properties: {
-        user: {
+        account: {
             type: "string",
             example: "5f0163bd3d51b727e790c0ba",
         },
-        balance: {
+        amount: {
             type: "number",
             example: 0,
         },
         type: {
             type: "number",
-            example: ACCOUNT.type.current,
+            example: TRANSACTION.type.credit,
         },
         status: {
             type: "number",
-            example: ACCOUNT.status.active,
+            example: TRANSACTION.status.success,
         },
         createdBy: {
             type: "staing",
@@ -26,10 +26,6 @@ const accountSchema = {
         updatedBy: {
             type: "staing",
             example: "5f01ee9f57f619750d4a852f",
-        },
-        transactionInProgress: {
-            type: "boolean",
-            example: false,
         },
         _id: {
             type: "staing",
@@ -46,14 +42,14 @@ const accountSchema = {
     },
 }
 
-export const ACCOUNTS_TAG = {
-    name: "Account",
+export const TRANSACTIONS_TAG = {
+    name: "Transaction",
     paths: {
-        "/accounts": {
+        "/transactions": {
             post: {
-                tags: ['Account'],
-                description: "Create Account API",
-                operationId: 'Create Account',
+                tags: ['Transaction'],
+                description: "Create Transaction, mode is credit or debit, debit can be done by only customer, send email notification to customer after money is deducted",
+                operationId: 'Create Transaction',
                 security: [
                     {
                         bearerAuth: ["token"]
@@ -68,23 +64,23 @@ export const ACCOUNTS_TAG = {
                             {
                                 type: "object",
                                 properties: {
-                                    email: {
+                                    accId: {
                                         type: 'string',
                                         description: 'Users id.',
-                                        required: false,
-                                        example: "ruhi@customer.com"
-                                    },
-                                    // balance: {
-                                    //     type: 'number',
-                                    //     description: 'Amount in rupees',
-                                    //     required: false,
-                                    //     example: 1000
-                                    // },
-                                    type: {
-                                        type: 'number',
-                                        description: 'Account type',
                                         required: true,
-                                        example: 1
+                                        example: "5f0163bd3d51b727e790c0ba"
+                                    },
+                                    amount: {
+                                        type: 'number',
+                                        description: 'Amount in rupees',
+                                        required: true,
+                                        example: 1000
+                                    },
+                                    mode: {
+                                        type: 'number',
+                                        description: 'Transaction type',
+                                        required: true,
+                                        example: TRANSACTION.type.credit
                                     }
                                 }
                             }
@@ -105,11 +101,9 @@ export const ACCOUNTS_TAG = {
                                             example: true
                                         },
                                         data: {
-                                            type: "array",
-                                            items: accountSchema,
-                                            count: {
-                                                type: "number",
-                                                example: 1
+                                            type: "object",
+                                            properties: {
+                                                message: "Transaction processed successfully."
                                             }
                                         }
                                     }
@@ -120,9 +114,9 @@ export const ACCOUNTS_TAG = {
                 }
             },
             get: {
-                tags: ['Account'],
-                description: "List accounts",
-                operationId: 'List accounts',
+                tags: ['Transaction'],
+                description: "List transactions",
+                operationId: 'List transactions',
                 security: [
                     {
                         bearerAuth: ["token"]
@@ -133,7 +127,7 @@ export const ACCOUNTS_TAG = {
                         name: "limit",
                         in: "query",
                         required: true,
-                        description: "Number of accounts",
+                        description: "Number of rows",
                         type: "number",
                         example: 10
                     },
@@ -151,7 +145,7 @@ export const ACCOUNTS_TAG = {
                         required: true,
                         description: "multiple filters, key:value,key1:val2",
                         type: "number",
-                        example: `type:${ACCOUNT.type.current}`
+                        example: `type:${TRANSACTION.type.credit}`
                     }
                 ],
                 responses: {
@@ -169,7 +163,7 @@ export const ACCOUNTS_TAG = {
                                         },
                                         data: {
                                             type: "array",
-                                            items: accountSchema
+                                            items: transactionSchema
                                         },
                                         count: {
                                             type: "number",
@@ -183,83 +177,11 @@ export const ACCOUNTS_TAG = {
                 }
             },
         },
-        "/accounts/{id}": {
-            patch: {
-                tags: ['Account'],
-                description: "Accept or reject or delete account application. send email notification to customer if account is deleted.",
-                operationId: 'Change Status accounts',
-                security: [
-                    {
-                        bearerAuth: ["token"]
-                    }
-                ],
-                parameters: [
-                    {
-                        name: "id",
-                        in: "path",
-                        required: true,
-                        description: "Account id",
-                        type: "number",
-                        example: "5f01ee9f57f619750d4a8530"
-                    }
-                ],
-                requestBody: {
-                    description: "Account payload, status 2 - activate, 3 - reject, 4 - delete account",
-                    required: true,
-                    content: {
-                        "application/json": {
-                            schema:
-                            {
-                                type: "object",
-                                properties: {
-                                    status: {
-                                        type: 'number',
-                                        description: 'Account status',
-                                        required: true,
-                                        example: ACCOUNT.status.active
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                responses: {
-                    "200": {
-                        description: "Return success message.",
-                        content: {
-                            "application/json": {
-                                schema:
-                                {
-                                    type: "object",
-                                    properties: {
-                                        success: {
-                                            type: "boolen",
-                                            example: true
-                                        },
-                                        data: {
-                                            type: "object",
-                                            properties: {
-                                                message: {
-                                                    type: "string",
-                                                    example: "Account activated accessfully."
-                                                }
-                                            }
-                                        },
-                                        count: {
-                                            type: "number",
-                                            example: 1
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
+        "/transactions/{id}": {
             get: {
-                tags: ['Account'],
-                description: "Get account details by id.",
-                operationId: 'Get Account by id',
+                tags: ['Transaction'],
+                description: "Get Trsansaction details by id.",
+                operationId: 'Get Trsansaction by id',
                 security: [
                     {
                         bearerAuth: ["token"]
@@ -270,14 +192,14 @@ export const ACCOUNTS_TAG = {
                         name: "id",
                         in: "path",
                         required: true,
-                        description: "Account id",
+                        description: "Transaction id",
                         type: "number",
                         example: "5f01ee9f57f619750d4a8530"
                     }
                 ],
                 responses: {
                     "200": {
-                        description: "Return success message.",
+                        description: "Return trsansaction object.",
                         content: {
                             "application/json": {
                                 schema:
@@ -290,7 +212,7 @@ export const ACCOUNTS_TAG = {
                                         },
                                         data: {
                                             type: "object",
-                                            properties: accountSchema.properties
+                                            properties: transactionSchema.properties
                                         },
                                         count: {
                                             type: "number",

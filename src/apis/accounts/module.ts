@@ -49,7 +49,7 @@ export async function createAccount(user: ValidUser, type: number, custEmail?: s
 // get account details by id
 export async function getAccountDetails(query: object, select: object,
     options: object = { lean: true }) {
-    return await AccountsModel.findOne(query, select, options);
+    return await AccountsModel.findOne(query, select, options).populate("user");
 }
 
 
@@ -78,7 +78,7 @@ export async function listAccounts(user: ValidUser, q: ReqParams) {
     if (user.role === USER.roles.customer) {
         query.user = user._id;
     }
-    // get list of customers
+    // get list of accounts
     const [accounts, count] = await Promise.all([
         AccountsModel.find(query, {}, { lean: true, ...q.options }).populate({ path: "user", select: 'name email phone role status' }),
         AccountsModel.countDocuments(query),
@@ -87,29 +87,6 @@ export async function listAccounts(user: ValidUser, q: ReqParams) {
     return {
         data: accounts, count
     }
-
-    // AccountsModel.aggregate([
-    //     {
-    //         $lookup: {
-    //             from: "users",
-    //             localField: "user",
-    //             foreignField: "_id",
-    //             as: "user"
-    //         }
-    //     },
-    //     {
-    //         $unwind: {
-    //             preserveNullAndEmptyArrays: true,
-    //             path: "$user"
-    //         }
-    //     },
-    //     {
-    //         $match: {
-    //             "user.user_role": USER.roles.customer
-    //         }
-    //     },
-    // ])
-
 }
 
 // this function allows staff memeber to accept ot reject or delete account
@@ -145,7 +122,7 @@ export async function changeStatusOfAccount(
         case ACCOUNT.status.deleted:
             account.status = status;
             // send email
-            const content = accountDeletedTemplate(account.user.name, account.type);
+            const content = accountDeletedTemplate(account.user.name, account._id);
             sendEmail(new EmailOptions(content.subject, content.html, null, account.user.email));
             message = "Account application deleted.";
             break;

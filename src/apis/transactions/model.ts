@@ -6,8 +6,8 @@ import { checkIfEmpty } from "../../utils";
 
 export const TRANSACTION = {
     type: {
-        credit: 1, // withdraw money from bank
-        debit: 2 // deposit money in bank
+        credit: 1, // add money
+        debit: 2 // remove money
     },
     status: {
         processing: 1, // transaction in progress
