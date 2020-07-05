@@ -29,6 +29,7 @@ const usersSchema = new Schema(
         email: {
             type: String, trim: true,
             required: [true, "Email is required."],
+            match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
             unique: true
         },
         phone: {
@@ -152,7 +153,7 @@ export let UsersModel = model<User>("users", usersSchema);
 // Self executing anonymous function to add bank staff if not exists
 ((users) => {
     // Whatever is here will be executed as soon as the script is loaded.
-    UsersModel.count({}).then((count) => {
+    UsersModel.countDocuments({}).then((count) => {
         if (!count) {
             UsersModel.create(users);
         }

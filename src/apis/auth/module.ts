@@ -49,8 +49,8 @@ export async function customerSignUp(email: string, pwd: string, name: string,
         throw new APIError(AUTH_ERRORS.emptyPwd.key, AUTH_ERRORS.emptyPwd.msg);
     }
     pwd = pwd.toString().trim();
-    await createCustomer(email, pwd, name, account);
-    return "Please check your email inbox to verify your account."
+    const emailContent = await createCustomer(email, pwd, name, account);
+    return "Please check your email inbox to verify your account." + emailContent;
 }
 
 // activate users account so that user can login and user the application
