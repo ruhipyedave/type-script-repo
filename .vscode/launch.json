@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            // "preLaunchTask": "",
+            // "preLaunchTask": "npm start",
             "name": "Launch Program",
             "program": "${workspaceFolder}/dist/server.js",
             // "preLaunchTask": "tsc: build - tsconfig.json",

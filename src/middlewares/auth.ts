@@ -30,8 +30,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
             res.locals.user = await validateUser(userId);
             return next();
         } catch (error) {
-            console.log(error);
-            processError(res, error, UNAUTHORIZED);
+            return processError(res, error, UNAUTHORIZED);
         }
     }
     return processError(res, new APIError(AUTH_ERRORS.accquireToken.key,

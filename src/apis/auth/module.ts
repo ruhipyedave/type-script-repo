@@ -38,9 +38,7 @@ export async function login(email: string, pwd: string)
 }
 
 // create a customer account
-export async function customerSignUp(email: string, pwd: string, name: string,
-    account?: { type: number, balance: number }
-) {
+export async function customerSignUp(email: string, pwd: string, name: string) {
     if (checkIfEmpty(email)) {
         throw new APIError(AUTH_ERRORS.emptyEmail.key, AUTH_ERRORS.emptyEmail.msg);
     }
@@ -49,8 +47,8 @@ export async function customerSignUp(email: string, pwd: string, name: string,
         throw new APIError(AUTH_ERRORS.emptyPwd.key, AUTH_ERRORS.emptyPwd.msg);
     }
     pwd = pwd.toString().trim();
-    await createCustomer(email, pwd, name, account);
-    return "Please check your email inbox to verify your account."
+    const emailContent = await createCustomer(email, pwd, name);
+    return "Please check your email inbox to verify your account." + emailContent;
 }
 
 // activate users account so that user can login and user the application
@@ -65,4 +63,10 @@ export async function verifyUser(token: string) {
     user.token = null;
     user.save();
     return "Verfication is complete, Please login to start using the application.";
+}
+
+
+export async function logOut(token: string) {
+    // blacklist used token
+    return "Logged out successfully."
 }

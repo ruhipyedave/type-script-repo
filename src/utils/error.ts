@@ -20,13 +20,14 @@ export const AUTH_ERRORS = {
     emptyPwd: { key: "10002", msg: "Missing field password." },
     authenticationFailed: { key: "10003", msg: "Invalid login credentials." },
     invalidPassword: { key: "10004", msg: "Invalid password." },
-    invalidUser: { key: "10004", msg: "User not found." },
-    notVerifiedUser: { key: "10004", msg: "User not verified." },
-    invalidToken: { key: "10005", msg: "Invalid token." },
-    expieredToken: { key: "10005", msg: "Expired token." },
-    accquireToken: { key: "10006", msg: "You need to acquire the token to access this resource." },
-    invalidResetPwdAttempt: { key: "10006", msg: "Invalid attempt to reset password." },
-    exceedResetPwdAttempts: { key: "10006", msg: "Reset password attempts exceed maximum limit." },
+    invalidUser: { key: "10005", msg: "User not found." },
+    notVerifiedUser: { key: "10006", msg: "User not verified." },
+    invalidToken: { key: "10007", msg: "Invalid token." },
+    expieredToken: { key: "10008", msg: "Expired token." },
+    accquireToken: { key: "10009", msg: "You need to acquire the token to access this resource." },
+    invalidResetPwdAttempt: { key: "10010", msg: "Invalid attempt to reset password." },
+    exceedResetPwdAttempts: { key: "10011", msg: "Reset password attempts exceed maximum limit." },
+    unauthorised: { key: "10012", msg: "You are not authorised to perform this action." },
 }
 
 export const CONNECTION_ERRORS = {
@@ -45,12 +46,14 @@ export const USERS_ERRORS = {
     deleted: { key: "30006", msg: "Account is deleted. Please contact bank." },
     invalid: { key: "30007", msg: "Invalid Email." },
     notFound: { key: "30008", msg: "User not found." },
+    missingCustEmail: { key: "30008", msg: "Missing Customer Email." },
 }
 
 export const ACCOUNTS_ERRORS = {
     missingFields: { key: "40001", msg: "Missing fields." },
     missingId: { key: "40001", msg: "Missing account id." },
     invalidType: { key: "40002", msg: "Invalid account type." },
+    notFound: { key: "40002", msg: "Account not found." },
 }
 
 export const TRANSACTIONS_ERRORS = {
@@ -61,6 +64,8 @@ export const TRANSACTIONS_ERRORS = {
     invalidAccId: { key: "50005", msg: "Invalid account id." },
     insufficientBalance: { key: "50006", msg: "Insufficient balnace." },
     inProgress: { key: "50007", msg: "Transaction is in progress, please try again after some time." },
+    invalidMode: { key: "50008", msg: "Invalid mode of transaction." },
+    notActive: { key: "50008", msg: "Account is not active." },
 }
 
 
