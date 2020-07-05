@@ -87,7 +87,7 @@ export const USERS_TAG = {
                         name: "limit",
                         in: "query",
                         required: true,
-                        description: "Number of Deployments",
+                        description: "Number of users",
                         type: "number",
                         example: 10
                     },

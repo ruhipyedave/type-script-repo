@@ -113,8 +113,10 @@ export class UserClass {
     status: number;
     role: number;
     token: string;
+    createdBy?: ObjectId;
+    updatedBy?: ObjectId;
     constructor(email: string, pwd: string, role: number = USER.roles.staff,
-        name?: string, phone?: number
+        name?: string, phone?: number, createdBy?: ObjectId
     ) {
         if (name) {
             this.name = name;
@@ -140,6 +142,10 @@ export class UserClass {
                 throw new APIError(USERS_ERRORS.invalidRole.key, USERS_ERRORS.invalidRole.msg);
         }
 
+        if (createdBy) {
+            this.createdBy = createdBy;
+            this.updatedBy = createdBy;
+        }
     }
 }
 

@@ -9,3 +9,11 @@ export function accountVerifyTemplate(username: string, token: string) {
                <br><br><br>Regards,<br>Bank Team.`
     };
 }
+
+export function accountDeletedTemplate(username: string, type: number) {
+    return {
+        subject: "Account Deleted !!!",
+        html: `Hello ${username}, <br><br><br>Your ${type} account is deleted. <br>
+               <br><br><br>Regards,<br>Bank Team.`
+    };
+}

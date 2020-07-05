@@ -46,12 +46,14 @@ export const USERS_ERRORS = {
     deleted: { key: "30006", msg: "Account is deleted. Please contact bank." },
     invalid: { key: "30007", msg: "Invalid Email." },
     notFound: { key: "30008", msg: "User not found." },
+    missingCustEmail: { key: "30008", msg: "Missing Customer Email." },
 }
 
 export const ACCOUNTS_ERRORS = {
     missingFields: { key: "40001", msg: "Missing fields." },
     missingId: { key: "40001", msg: "Missing account id." },
     invalidType: { key: "40002", msg: "Invalid account type." },
+    notFound: { key: "40002", msg: "Account not found." },
 }
 
 export const TRANSACTIONS_ERRORS = {

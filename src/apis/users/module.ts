@@ -5,8 +5,8 @@ import { USERS_ERRORS, APIError, ACCOUNTS_ERRORS, AUTH_ERRORS } from "../../util
 import { generateToken } from "../../utils/auth";
 import { ACCESS_TOKEN_LIFETIME } from "../auth/module";
 import { accountVerifyTemplate } from "../../utils/email-templates";
-import { createAccount } from "../accounts/module";
 import { UNAUTHORIZED } from "http-status-codes";
+import { ObjectId } from "bson";
 
 export async function findUser(
     query: object, select: object = {},
@@ -15,24 +15,10 @@ export async function findUser(
     return await UsersModel.findOne(query, select, options);
 }
 
-export async function createCustomer(email: string, pwd: string, name: string, account: {
-    type: number,
-    balance: number,
-}) {
+export async function createCustomer(email: string, pwd: string, name: string, createdBy?: ObjectId) {
     if (checkIfEmpty(name)) {
         throw new APIError(USERS_ERRORS.missingName.key, USERS_ERRORS.missingName.msg);
     }
-    // if (!account) {
-    //     throw new APIError(ACCOUNTS_ERRORS.missingFields.key, ACCOUNTS_ERRORS.missingFields.msg);
-    // }
-
-    // if (isNaN(account.type)) {
-    //     throw new APIError(ACCOUNTS_ERRORS.invalidType.key, ACCOUNTS_ERRORS.invalidType.msg);
-    // }
-
-    // if (isNaN(account.balance)) {
-    //     account.balance = 0;
-    // }
 
     // check if customer exists
     const customer = await findUser({ email });
@@ -40,11 +26,8 @@ export async function createCustomer(email: string, pwd: string, name: string, a
     // if custoer does not exist create a new account for the customer
     if (!customer) {
         name = name.toString().trim();
-        const user = await UsersModel.create(new UserClass(email, pwd, USER.roles.customer, name));
+        const user = await UsersModel.create(new UserClass(email, pwd, USER.roles.customer, name, null, createdBy));
         user.token = await generateToken(user._id.toString(), ACCESS_TOKEN_LIFETIME.verify);
-
-        // create customers new account
-        // await createAccount(user._id, account.type, account.balance);
         user.save();
         const content = accountVerifyTemplate(name, user.token);
         sendEmail(new EmailOptions(content.subject, content.html, null, user.email));
@@ -70,7 +53,7 @@ export async function createCustomer(email: string, pwd: string, name: string, a
 
 
 export interface ValidUser {
-    _id: string;
+    _id: ObjectId;
     role: number;
 }
 
