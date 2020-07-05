@@ -1,3 +1,35 @@
+import { USER } from "./model";
+
+const userSchema = {
+    type: "object",
+    properties: {
+        _id: {
+            type: "string",
+            example: "5f0163bd3d51b727e790c0ba"
+        },
+        name: {
+            type: "string",
+            example: "One Customer"
+        },
+        phone: {
+            type: "string",
+            example: "999999999"
+        },
+        email: {
+            type: "string",
+            example: "ruhi@customer.com"
+        },
+        role: {
+            type: "number",
+            example: USER.roles.customer
+        },
+        status: {
+            type: "number",
+            example: USER.status.active
+        }
+    }
+}
+
 export const USERS_TAG = {
     name: "User",
     paths: {
@@ -26,32 +58,7 @@ export const USERS_TAG = {
                                         },
                                         data: {
                                             type: "object",
-                                            properties: {
-                                                _id: {
-                                                    type: "string",
-                                                    example: "5f0163bd3d51b727e790c0ba"
-                                                },
-                                                name: {
-                                                    type: "string",
-                                                    example: "One Customer"
-                                                },
-                                                phone: {
-                                                    type: "string",
-                                                    example: "999999999"
-                                                },
-                                                email: {
-                                                    type: "string",
-                                                    example: "ruhi@customer.com"
-                                                },
-                                                role: {
-                                                    type: "number",
-                                                    example: 3
-                                                },
-                                                status: {
-                                                    type: "number",
-                                                    example: 2
-                                                }
-                                            }
+                                            properties: userSchema.properties
                                         },
                                         count: {
                                             type: "number",
@@ -91,6 +98,14 @@ export const USERS_TAG = {
                         description: "Number of entries to skip",
                         type: "number",
                         example: 1
+                    },
+                    {
+                        name: "filter",
+                        in: "query",
+                        required: true,
+                        description: "multiple filters, key:value,key1:val2",
+                        type: "number",
+                        example: `role:${USER.roles.customer},status:${USER.status.active}`
                     }
                 ],
                 responses: {
@@ -108,32 +123,7 @@ export const USERS_TAG = {
                                         },
                                         data: {
                                             type: "array",
-                                            items: {
-                                                _id: {
-                                                    type: "string",
-                                                    example: "5f0163bd3d51b727e790c0ba"
-                                                },
-                                                name: {
-                                                    type: "string",
-                                                    example: "One Customer"
-                                                },
-                                                phone: {
-                                                    type: "string",
-                                                    example: "999999999"
-                                                },
-                                                email: {
-                                                    type: "string",
-                                                    example: "ruhi@customer.com"
-                                                },
-                                                role: {
-                                                    type: "number",
-                                                    example: 3
-                                                },
-                                                status: {
-                                                    type: "number",
-                                                    example: 2
-                                                }
-                                            }
+                                            items: userSchema
                                         },
                                         count: {
                                             type: "number",

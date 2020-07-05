@@ -53,33 +53,35 @@ export function parseRequestParams(req: Request) {
         }
     }
 
-    const filter = req.query.filter.toString().split(",");
-    if (filter.length) {
-        result.filter = {};
-        _.each(filter, (ele) => {
-            const [attr, val] = ele.split(":");
-            result.filter[attr.trim()] = val.trim();
-        })
-    }
-
-    const sortArr = req.query.filter.toString().split(",");
-    if (sortArr.length) {
-        const sort: {
-            [key: string]: string;
-        } = {};
-        _.each(sort, (ele) => {
-            const [attr, val] = ele.split(":");
-            if (val === "asc" || val === "desc") {
-                sort[attr.trim()] = val.trim();
-            }
-        });
-
-        if (Object.keys(sort).length > 0) {
-            result.options.sort = sort;
+    if (req.query.filter) {
+        const filter = req.query.filter.toString().split(",");
+        if (filter.length) {
+            result.filter = {};
+            _.each(filter, (ele) => {
+                const [attr, val] = ele.split(":");
+                result.filter[attr.trim()] = val.trim();
+            })
         }
     }
 
+    if (req.query.sort) {
+        const sortArr = req.query.filter.toString().split(",");
+        if (sortArr.length) {
+            const sort: {
+                [key: string]: string;
+            } = {};
+            _.each(sort, (ele) => {
+                const [attr, val] = ele.split(":");
+                if (val === "asc" || val === "desc") {
+                    sort[attr.trim()] = val.trim();
+                }
+            });
 
+            if (Object.keys(sort).length > 0) {
+                result.options.sort = sort;
+            }
+        }
+    }
 
     if (req.query.search && checkIfEmpty(req.query.search.toString())) {
         result.search = req.query.search.toString().trim();

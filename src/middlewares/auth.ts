@@ -26,7 +26,6 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     if (req.headers.authorization) {
         try {
             const token = req.headers.authorization.replace("Bearer", '').trim();
-            console.log("token", token);
             const userId = await verifyToken(token);
             res.locals.user = await validateUser(userId);
             return next();

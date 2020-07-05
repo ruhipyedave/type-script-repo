@@ -111,14 +111,9 @@ export async function getUserProfile(user: ValidUser) {
 
 
 export async function listUsers(user: ValidUser, q: ReqParams) {
-    let query = {
-        role: USER.roles.customer
-    }
-    if (q.filter) {
-        query = {
-            ...query,
-            ...q.filter
-        }
+    const query = {
+        role: USER.roles.customer,
+        ...q.filter
     }
 
     const select = {
