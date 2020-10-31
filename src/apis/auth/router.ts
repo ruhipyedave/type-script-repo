@@ -16,8 +16,9 @@ router.post('/login', async (req, res, next) => {
 // any user who signups by default gets role of customer
 router.post('/signup', async (req, res, next) => {
     try {
-        const message: string = await customerSignUp(req.body.email, req.body.password, req.body.name);
-        processResponse(res, new APIResponse({ message }, 1));
+        const result = await customerSignUp(req.body.email, req.body.password, req.body.name,
+        req.body.lname, res.locals.email, req.body.pinCode);
+        processResponse(res, new APIResponse({ message: "Customer Created Successfully." }, 1));
     } catch (error) {
         processError(res, error)
     }

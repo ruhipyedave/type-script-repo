@@ -14,13 +14,13 @@ server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
-mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(res => console.log("Database connected ... "))
-    .catch((error) => {
-        console.log("connectionString", connectionString);
-        console.error(error);
-        return process.exit();
-    });
+// mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+//     .then(res => console.log("Database connected ... "))
+//     .catch((error) => {
+//         console.log("connectionString", connectionString);
+//         console.error(error);
+//         return process.exit();
+//     });
 
 function onError(error: NodeJS.ErrnoException): void {
     if (error.syscall !== 'listen') throw error;

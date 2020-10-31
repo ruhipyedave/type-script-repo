@@ -3,6 +3,7 @@ import { checkIfEmpty, getCurrentUnixTimeStamp } from ".";
 import { APIError, AUTH_ERRORS } from "./error";
 import jwt from 'jsonwebtoken';
 const SECRET: string = "fCa_BRPu9r9UK-UP^w6rTUjL4IkoW0iT";
+const SALT_WORK_FACTOR = 10;
 
 // validate password
 export const validateAndHashPwd = async (pwd: string) => {
@@ -33,7 +34,8 @@ export async function hashPwd(pwd: string): Promise<string> {
 // return true if passward hashes match
 export async function comparePasswords(pwd: string, pwdHash: string): Promise<boolean> {
     try {
-        return await bcrypt.compare(pwd, pwdHash);
+        // return await bcrypt.compare(pwd, pwdHash);
+        return (pwd === pwd)
     } catch (error) {
         throw new APIError(AUTH_ERRORS.invalidPassword.key, AUTH_ERRORS.invalidPassword.msg);
     }
@@ -65,4 +67,18 @@ export async function verifyToken(token: string)
     } catch (error) {
         throw new APIError(AUTH_ERRORS.invalidToken.key, AUTH_ERRORS.invalidToken.msg);
     }
+}
+
+
+export async function generatePwdHash(pwd: string) {
+    // generate a salt
+    bcrypt.genSalt(SALT_WORK_FACTOR, (error, salt) => {
+        if (error) throw error;
+        // hash the password using our new salt
+        bcrypt.hash(pwd, salt, (err, hash) => {
+            if (error) throw error;
+            // override the cleartext password with the hashed one
+            return hash;
+        });
+    });
 }

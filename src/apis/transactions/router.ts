@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { processError } from "../../utils/error";
 const router = Router();
-import { performTransaction, getTransactionById, listTransactions } from "./module";
+import { performTransaction, listTransactions } from "./module";
 import { APIResponse, processResponse } from "../../utils/response";
 import { parseRequestParams } from "../../utils";
 
@@ -16,16 +16,6 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-
-// get transaction by id
-router.get('/:id', async (req, res, next) => {
-    try {
-        const result = await getTransactionById(res.locals.user, req.params.id);
-        processResponse(res, new APIResponse(result, 1));
-    } catch (error) {
-        processError(res, error)
-    }
-});
 
 
 // make transaction can be either credit or debit

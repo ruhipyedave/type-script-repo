@@ -1,9 +1,7 @@
+
+import { currencies } from "../../objects/currencies";
 import { Schema, Document, model } from "mongoose";
 import { ObjectId } from "bson";
-import { APIError } from "../../utils/error";
-import { ACCOUNTS_ERRORS } from "../../utils/error";
-import { checkIfEmpty } from "../../utils";
-
 export const ACCOUNT = {
     type: {
         saving: 1, // deposit account with limited transactions
@@ -57,47 +55,26 @@ const accountsSchema = new Schema(
     },
     { timestamps: true }
 );
-
-export interface Account extends Document {
-    user: ObjectId;
-    balance: number;
-    type: number;
-    status: number;
-    createdBy?: ObjectId;
-    updatedBy?: ObjectId;
-    createdAt?: Date;
-    updatedAt?: Date;
-    transactionInProgress: boolean;
-}
-
-export let AccountsModel = model<Account>("accounts", accountsSchema);
-
 export class AccountClass {
-    user: ObjectId;
+    no: number;
+    user: string;
     balance: number;
-    type: number;
+    currency: string;
     status: number;
-    createdBy?: ObjectId;
-    updatedBy?: ObjectId;
+    createdBy?: string;
+    updatedBy?: string;
     createdAt?: Date;
     updatedAt?: Date;
     transactionInProgress: boolean;
-    constructor(userId: ObjectId | string, balance: number, type: number,
-        status?: number, createdById?: ObjectId | string) {
-        this.user = new ObjectId(userId);
+    constructor(email: string, balance: number, currency: string,
+        createdById?: string) {
+        this.no = Date.now() / 100; // account number
+        this.user = email;
         this.balance = balance;
-        switch (type) {
-            case ACCOUNT.type.current:
-            case ACCOUNT.type.saving:
-                this.type = type;
-                break;
-            default:
-                throw new APIError(ACCOUNTS_ERRORS.invalidType.key, ACCOUNTS_ERRORS.invalidType.msg);
-        }
-        if (status) {
-            this.status = status;
-        }
-        this.createdBy = createdById && checkIfEmpty(createdById.toString()) ? this.user : new ObjectId(createdById);
+        this.currency = currencies[currency];
+        this.createdBy = createdById;
         this.updatedBy = this.createdBy;
+        this.createdAt = new Date();
+        this.updatedAt = this.createdAt;
     }
 }

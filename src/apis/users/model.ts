@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import _ from "underscore";
 import { ObjectId } from "bson";
 import { USERS_ERRORS, APIError } from "../../utils/error";
-const SALT_WORK_FACTOR = 10;
 
 export const USER = {
     roles: {
@@ -74,56 +73,37 @@ const usersSchema = new Schema(
 
 usersSchema.index({ email: 1 }, { unique: true });
 
-usersSchema.pre<User>('save', function (next) {
-    const user = this;
-    // only hash the password if it has been modified (or is new)
-    if (!user.isModified('pwdHash')) {
-        return next();
-    }
-    // generate a salt
-    bcrypt.genSalt(SALT_WORK_FACTOR, (error, salt) => {
-        if (error) return next(error);
-        // hash the password using our new salt
-        bcrypt.hash(user.pwdHash, salt, (err, hash) => {
-            if (err) return next(err);
-            // override the cleartext password with the hashed one
-            user.pwdHash = hash;
-            next();
-        });
-    });
-});
 
-export interface User extends Document {
-    name: string;
-    email: string;
-    phone: number;
-    pwdHash: string;
-    status: number;
-    role: number;
-    token: string;
-    createdBy?: ObjectId;
-    updatedBy?: ObjectId;
-}
 
 export class UserClass {
     name: string;
+    lname: string;
     email: string;
-    phone: number;
+    postCode: string;
+    phone?: number;
     pwdHash: string;
     status: number;
     role: number;
     token: string;
-    createdBy?: ObjectId;
-    updatedBy?: ObjectId;
+    createdBy?: string;
+    updatedBy?: string;
     constructor(email: string, pwd: string, role: number = USER.roles.staff,
-        name?: string, phone?: number, createdBy?: ObjectId
+        name?: string, lname?: string, phone?: number,
+        createdBy?: string, postCode?: string
     ) {
         if (name) {
             this.name = name;
         }
+        if (lname) {
+            this.lname = lname;
+        }
 
         if (phone) {
             this.phone = phone;
+        }
+
+        if (postCode) {
+            this.postCode = postCode;
         }
         this.email = email;
         this.pwdHash = pwd;
@@ -149,24 +129,6 @@ export class UserClass {
     }
 }
 
-const DEFAULT_USERS = [
-    new UserClass("one@staff.com", "one@staff", USER.roles.staff, "One Staff", 1234567890),
-    new UserClass("two@staff.com", "two@staff", USER.roles.staff, "Two Staff", 1234567890),
-    new UserClass("one@customer.com", "one@customer", USER.roles.customer, "One Customer", 1234567890),
-    new UserClass("two@customer.com", "two@customer", USER.roles.customer, "Two Customer", 1234567890),
-];
 
-export let UsersModel = model<User>("users", usersSchema);
 
-// Self executing anonymous function to add default users if not exists
-((users) => {
-    // Whatever is here will be executed as soon as the script is loaded.
-    UsersModel.countDocuments({}).then((count) => {
-        if (!count) {
-            UsersModel.create(users).then(() => {
-                UsersModel.updateMany({}, { status: USER.status.active }).exec();
-            });
-        }
-    })
-})(DEFAULT_USERS);
 

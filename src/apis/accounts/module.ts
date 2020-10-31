@@ -1,20 +1,14 @@
-import { AccountsModel, AccountClass, ACCOUNT } from "./model";
-import { ValidUser, validateUser, findUser, createCustomer } from "../users/module";
-import { USER } from "../users/model";
+import { AccountClass} from "./model";
+import { ValidUser, findUser } from "../users/module";
+import { USER, UserClass } from "../users/model";
 import { ReqParams, checkIfEmpty } from "../../utils";
 import { USERS_ERRORS, APIError, AUTH_ERRORS, ACCOUNTS_ERRORS } from "../../utils/error";
 import { UNAUTHORIZED } from "http-status-codes";
-import { EmailOptions, sendEmail } from "../../utils/email";
-import { accountDeletedTemplate } from "../../utils/email-templates";
+import { accounts } from "../../objects/accounts";
 
 // create new account
-export async function createAccount(user: ValidUser, type: number, custEmail?: string) {
-    let account: AccountClass;
+export async function createAccount(user: UserClass, custEmail: string, currency: string) {
     switch (user.role) {
-        // if customer create his own account
-        case USER.roles.customer:
-            account = await new AccountClass(user._id, 0, type);
-            break;
 
         // if staff then create customers account
         case USER.roles.staff:
@@ -22,39 +16,29 @@ export async function createAccount(user: ValidUser, type: number, custEmail?: s
                 throw new APIError(USERS_ERRORS.missingCustEmail.key, USERS_ERRORS.missingCustEmail.msg);
             }
             // check if customer exist
-            let customer = await findUser({ email: custEmail });
+            const customer = await findUser(custEmail);
 
             // if customer not exist create new ciustomer with default password
             if (customer == null) {
-                // create new user
-                await createCustomer(custEmail, "password", custEmail, user._id);
-                customer = await findUser({ email: custEmail });
-            }
-
-            // if customer exist and is deleted then throw error
-            if (customer.status === USER.status.deleted) {
-                throw new APIError(USERS_ERRORS.deleted.key, USERS_ERRORS.deleted.msg);
+                throw new APIError(USERS_ERRORS.notFound.key, USERS_ERRORS.notFound.msg);
             }
 
             // create account for customer
-            account = await new AccountClass(user._id, 0, type);
-            break;
+            return new AccountClass(custEmail, 0, currency, user.email);
 
         default:
             throw new APIError(AUTH_ERRORS.unauthorised.msg, AUTH_ERRORS.unauthorised.key, UNAUTHORIZED);
     }
-    return await AccountsModel.create(account);
 }
 
-// get account details by id
-export async function getAccountDetails(query: object, select: object,
-    options: object = { lean: true }) {
-    return await AccountsModel.findOne(query, select, options).populate("user");
+// get current users account details
+export async function getAccountDetails(user: UserClass){
+    return accounts[user.email];
 }
 
 
 // view selected accounts details
-export async function getAccountDetailsById(user: ValidUser, accId: string) {
+export function getAccountDetailsById(user: ValidUser, accId: string) {
     const query: any = {
         _id: accId,
     }
@@ -62,11 +46,11 @@ export async function getAccountDetailsById(user: ValidUser, accId: string) {
     if (user.role === USER.roles.customer) {
         query.user = user._id;
     }
-    return await AccountsModel.findOne(query, {}, { lean: true });
+    return {}
 }
 
 // list accounts
-export async function listAccounts(user: ValidUser, q: ReqParams) {
+export function listAccounts(user: ValidUser, q: ReqParams) {
     let query: any = {};
     if (q.filter) {
         query = {
@@ -78,59 +62,10 @@ export async function listAccounts(user: ValidUser, q: ReqParams) {
     if (user.role === USER.roles.customer) {
         query.user = user._id;
     }
-    // get list of accounts
-    const [accounts, count] = await Promise.all([
-        AccountsModel.find(query, {}, { lean: true, ...q.options }).populate({ path: "user", select: 'name email phone role status' }),
-        AccountsModel.countDocuments(query),
-    ]);
+
 
     return {
-        data: accounts, count
+        data: [""], count: 0
     }
 }
 
-// this function allows staff memeber to accept ot reject or delete account
-export async function changeStatusOfAccount(
-    user: ValidUser, accId: string, status: number) {
-    let message = "";
-
-    if (user.role !== USER.roles.staff) {
-        throw new APIError(AUTH_ERRORS.unauthorised.msg, AUTH_ERRORS.unauthorised.key, UNAUTHORIZED);
-    }
-
-    const account: any = await AccountsModel.findById(accId).populate({ path: "user", select: 'name email phone role status' })
-
-    if (!account) {
-        throw new APIError(ACCOUNTS_ERRORS.notFound.msg, ACCOUNTS_ERRORS.notFound.key);
-
-    }
-
-    switch (status) {
-        // accept account application
-        case ACCOUNT.status.active:
-            account.status = status;
-            message = "Account application accepted.";
-            break;
-
-        // reject account application
-        case ACCOUNT.status.inactive:
-            account.status = status;
-            message = "Account application rejected.";
-            break;
-
-        // delete account application and send notification email to user
-        case ACCOUNT.status.deleted:
-            account.status = status;
-            // send email
-            const content = accountDeletedTemplate(account.user.name, account._id);
-            sendEmail(new EmailOptions(content.subject, content.html, null, account.user.email));
-            message = "Account application deleted.";
-            break;
-
-        default:
-            throw new APIError(ACCOUNTS_ERRORS.invalidType.key, ACCOUNTS_ERRORS.invalidType.msg);
-
-    }
-    account.save();
-    return message;
-}

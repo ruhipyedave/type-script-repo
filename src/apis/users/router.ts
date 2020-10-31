@@ -20,7 +20,7 @@ router.get('/profile', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
     try {
         const query = parseRequestParams(req);
-        const result = await listUsers(res.locals.user, query);
+        const result = listUsers(res.locals.user, query);
         processResponse(res, new APIResponse(result.data, result.count));
     } catch (error) {
         processError(res, error)
